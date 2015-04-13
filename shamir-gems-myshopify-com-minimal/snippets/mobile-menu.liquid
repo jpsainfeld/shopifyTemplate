@@ -1,0 +1,44 @@
+<div class="flyout">
+<ul class="clearfix">
+  {% for link in linklists.main-menu.links %}
+  {% if linklists[link.handle] == empty %}
+  <li>
+    <a href="{{ link.url }}" class="{% if link.active %} current{% endif %} navlink"><span>{{ link.title }}</span></a>
+  </li>
+  {% else %}
+  <li>
+    <a href="{{ link.url }}" class="{% if link.active %} current{% endif %} navlink"><span>{{ link.title }}</span></a>
+    <span class="more"><i class="fa fa-plus"></i></span>
+    <ul class="sub-menu">
+      {% for l in linklists[link.handle].links %}
+      <li><a href="{{ l.url }}" class="{% if l.active %}current {% endif %}{% if forloop.last %} last {% endif %} navlink">{{ l.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </li>
+  {% endif %}
+  {% endfor %}
+
+{% if shop.customer_accounts_enabled %}
+  <li><span class="account-links">{{ 'general.account.account_links' | t }}</span>
+    <span class="more"><i class="fa fa-user"></i></span>
+    <ul class="sub-menu">
+    {% if customer  %}
+      <li class="customer-links"><a href="/account">{{ 'general.account.your_account' | t }}</a></li>
+    {% else %}
+      <li class="customer-links">{{ 'general.account.log_in' | t | customer_login_link }}</li>
+      {% if shop.customer_accounts_optional %}
+      <li class="customer-links">{{ 'general.account.create_account' | t | customer_register_link }}</li>
+      {% endif %}
+    {% endif %}
+    </ul>
+  </li>
+{% endif %}
+
+    <li class="search-field">
+    <form class="search" action="/search">
+      <button type="submit" alt="{{ 'general.search.go' | t }}" class="go"><i class="fa fa-search"></i></button>
+      <input type="text" name="q" class="search_box" placeholder="{{ 'general.search.placeholder' | t }}" value="{{ search.terms }}" />
+    </form>
+  </li>
+</ul>
+</div>

@@ -1,0 +1,19 @@
+{% if paginate.pages > 1 %}
+<div class="row">
+  <div class="span12">
+    <ul class="pagination clearfix">
+    {% if paginate.previous %}
+    	<li><a href="{{ paginate.previous.url }}" class="prev">{{ 'general.pagination.previous' | t }}</a></li>
+    {% else %}
+    	<li><span>{{ back_word }}</span></li>
+    {% endif %}
+    	<li>{{ 'general.pagination.summary' | t: current: paginate.current_page, page_count: paginate.pages }}</li>
+    {% if paginate.next %}
+    	<li><a href="{{ paginate.next.url }}" class="next">{{ 'general.pagination.next' | t }}</a></li>
+    {% else %}
+    	<li><span>{{ next_word }}</span></li>
+    {% endif %}
+    </ul>
+  </div>
+</div>
+{% endif %}

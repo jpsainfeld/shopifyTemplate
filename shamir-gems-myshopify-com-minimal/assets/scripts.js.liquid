@@ -1,0 +1,151 @@
+var MinimalTheme = {};
+
+jQuery(window).ready(function(){
+  
+  {% if settings.display_slideshow %}
+  $('.flexslider').flexslider({
+    animation: "slide",
+    slideshow: true,
+    animationDuration: 700,
+    slideshowSpeed: {{ settings.slideshow_speed }},
+    animation: "{{ settings.slideshow_transition }}",
+    controlsContainer: ".flex-controls",
+    controlNav: false,
+    keyboardNav: true
+  }).hover(function(){ $('.flex-direction-nav').fadeIn();}, function(){$('.flex-direction-nav').fadeOut();});
+  {% endif %}
+});
+
+jQuery(window).load(function(){  
+
+  $("select.loc_on_change").change(function(){
+    if($(this).find(":selected").attr("value") == "#") return false;
+    window.location = $(this).find(":selected").attr("value");
+  });
+   
+});
+
+jQuery(document).ready(function($){
+    
+  // force wide nav -->  
+  {% if settings.force_wide_nav and settings.navigation_alignment == "right" %}
+  (function($,sr){  
+    // debouncing function from John Hann
+    // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+    var debounce = function (func, threshold, execAsap) {
+      var timeout;
+      return function debounced() {
+        var obj = this, args = arguments;
+        function delayed() {
+          if (!execAsap)
+            func.apply(obj, args);
+          timeout = null;
+        };
+        if (timeout)
+          clearTimeout(timeout);
+        else if (execAsap)
+          func.apply(obj, args);
+        timeout = setTimeout(delayed, threshold || 500);
+      };
+    }
+    // smartresize 
+    jQuery.fn[sr] = function(fn) {  
+      return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); 
+    };  
+  })(jQuery,'smartresize');
+        
+  var nav_items = $('nav.main > ul > li');
+  var nav_width = 0;
+  nav_items.each(function(i){
+    nav_width += $(this).outerWidth(true) * 1.14 ;
+  });
+  var nav_container = $('nav.main').parent();
+  var logo_container = $('.logo').parent();
+      
+  if (nav_width >= $('nav.main').width()){  
+    nav_container.removeClass('span8').addClass('span12 wide'); 
+    logo_container.removeClass('span4').addClass('span12 wide');
+    $('nav.main').children().removeClass('fr');
+  }  
+  
+  $(window).smartresize(function(){
+    if (nav_width >= $('nav.main').width()){  
+      nav_container.removeClass('span8').addClass('span12 wide');
+      logo_container.removeClass('span4').addClass('span12 wide');
+      $('nav.main').children().removeClass('fr');
+    } else {
+      nav_container.removeClass('span12 wide').addClass('span8');
+      logo_container.removeClass('span12 wide').addClass('span4');
+      $('nav.main').children().addClass('fr');
+    }
+  });
+  {% endif %}
+  // <-- end force wide nav
+  
+  $(".flyout").hide();
+
+  $("#menu-button").on("click", function() {
+    $(".flyout").slideToggle( "fast" );
+  });
+
+  $(".sub-menu").hide();
+  $(".more, .account-links").on("click", function() {
+    $(this).nextAll("ul").slideToggle( "fast" );
+    $("i", this).toggleClass("fa-plus fa-minus");
+    $(this).next(".more").find("i").toggleClass("fa-user fa-minus");
+  });  
+
+  $("nav.mobile select").change(function(){ window.location = jQuery(this).val(); });
+   
+  {% if settings.enable_product_image_zoom %}
+  /* Initialize zoom on main product image */
+  var mainProductImage = $('.image.featured img');
+  if (mainProductImage.size()) {
+    var zoomedSrc = mainProductImage.attr('src').replace('_1024x1024', '');
+    mainProductImage
+    .wrap('<span style="display:inline-block;max-width:100%"></span>')
+    .css('display', 'block')
+    .parent()
+    .zoom( { url: zoomedSrc } );
+  }
+  {% endif %}
+  
+  MinimalTheme.switchImage = function(newSizedImageSrc, newImage, mainImageDomEl) {
+    var largestImage = newSizedImageSrc.replace('_1024x1024', '');
+    $(mainImageDomEl)
+      .attr('src', newSizedImageSrc);
+    {% if settings.enable_product_image_zoom %}
+    $(mainImageDomEl)
+      .parent()
+      .trigger('zoom.destroy')
+      .zoom( { url: largestImage } );
+    {% endif %}
+  };
+  
+  $('#product .thumbs a').click(function(e){
+    e.preventDefault();
+    var newSizedImageSrc = $(this).attr('href');
+    var mainImageDomEl = $('.image.featured img')[0];
+    MinimalTheme.switchImage(newSizedImageSrc, null, mainImageDomEl);
+  });
+  
+  $('input[type="submit"], input.btn, button').click(function(){ // remove ugly outline on input button click
+    $(this).blur();
+  })
+  
+  $('li.dropdown').hover(function(){
+    $(this).children('.dropdown').show();
+    $(this).children('.dropdown').stop();
+    $(this).children('.dropdown').animate({
+      opacity: 1.0
+    }, 200);
+  }, function(){
+    $(this).children('.dropdown').stop();
+    $(this).children('.dropdown').animate({
+      opacity: 0.0
+    }, 400, function(){
+      $(this).hide();
+    });
+  });
+  
+});

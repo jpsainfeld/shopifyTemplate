@@ -1,0 +1,55 @@
+<div id="page" class="row">
+
+  <div class="span12">
+    <h1>{{ page.title }}</h1>
+    <div class="page-with-contact-form">
+      {{ page.content }}
+
+        {% form 'contact' %}
+        {% if form.posted_successfully? %}
+        <div class="successForm feedback">
+          <p>{{ 'contact.form.success' | t }}</p>
+        </div>
+        {% endif %}
+
+        {% if form.errors %}
+        <div class="errorForm feedback">
+
+          <p>{{ 'contact.errors.errors_with_count' | t: count: form.errors.count }}</p>
+
+          {% for field in form.errors %}
+          <p>{{ 'contact.errors.message_html' | t: field: field, error: form.errors.messages[field] }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div id="contactFormWrapper">
+          <p>
+            <label>{{ 'contact.form.name' | t }}</label><br/>
+            <input type="text" id="contactFormName" name="contact[name]" placeholder="{{ 'contact.form.name_ph' | t }}" />
+          </p>
+          <p>
+            <label>{{ 'contact.form.email' | t }}</label><br/>
+            <input type="email" id="contactFormEmail" name="contact[email]" placeholder="{{ 'contact.form.email_ph' | t }}" />
+          </p>
+          <p>
+            <label>{{ 'contact.form.phone' | t }}</label><br/>
+            <input type="telephone" id="contactFormTelephone" name="contact[phone]" placeholder="{{ 'contact.form.phone_ph' | t }}" />
+          </p>
+          <p>
+            <label>{{ 'contact.form.message' | t }}</label><br/>
+            <textarea rows="15" cols="75" id="contactFormMessage" name="contact[body]" placeholder="{{ 'contact.form.message_ph' | t }}"></textarea>
+          </p>
+          <p>
+            <input type="submit" id="contactFormSubmit" value="{{ 'contact.form.send' | t }}" class="btn" />
+          </p>
+        </div>
+        {% endform %}
+
+    </div>
+  </div>
+
+</div>
+
+
+
